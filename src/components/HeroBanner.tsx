@@ -10,7 +10,7 @@ const slides = [
     image: 'https://img.freepik.com/free-vector/gambling-ace-card-poker-banner-with-text-space_1017-54108.jpg'
   },
   {
-    image: 'https://www.lc247.live/assets/images/mobile/promo/lc247/kv-all-live-games.webp'
+    image: 'https://www.canva.com/design/DAGUgmAEzxQ/wYi1ewk6XZbx0X3jUxBDLQ/view?utm_content=DAGUgmAEzxQ&utm_campaign=designshare&utm_medium=link&utm_source=editor'
   },
   {
     image: 'https://www.lc247.live/assets/images/mobile/promo/lc247/kv-all-andarbahar.webp'
