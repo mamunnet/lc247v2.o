@@ -7,7 +7,7 @@ import 'swiper/css/navigation';
 
 const slides = [
   {
-    image: 'https://www.lc247.live/assets/images/mobile/promo/lc247/kv-all-super-withdrawal.webp'
+    image: 'https://img.freepik.com/free-vector/gambling-ace-card-poker-banner-with-text-space_1017-54108.jpg'
   },
   {
     image: 'https://www.lc247.live/assets/images/mobile/promo/lc247/kv-all-live-games.webp'
