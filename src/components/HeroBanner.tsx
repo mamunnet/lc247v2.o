@@ -7,13 +7,13 @@ import 'swiper/css/navigation';
 
 const slides = [
   {
-    image: 'https://images.unsplash.com/photo-1579548122080-c35fd6820ecb?q=80&w=2940&auto=format&fit=crop'
+    image: 'https://www.lc247.live/assets/images/mobile/promo/lc247/kv-all-super-withdrawal.webp'
   },
   {
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop'
+    image: 'https://www.lc247.live/assets/images/mobile/promo/lc247/kv-all-live-games.webp'
   },
   {
-    image: 'https://images.unsplash.com/photo-1511406361295-0a1ff814c0ce?q=80&w=2940&auto=format&fit=crop'
+    image: 'https://www.lc247.live/assets/images/mobile/promo/lc247/kv-all-andarbahar.webp'
   }
 ];
 
