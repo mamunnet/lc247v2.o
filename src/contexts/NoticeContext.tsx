@@ -11,14 +11,7 @@ interface NoticeContextType {
 const NoticeContext = createContext<NoticeContextType | undefined>(undefined);
 
 const initialNotices: Notice[] = [
-  {
-    id: '1',
-    title: 'Welcome to LC247',
-    content: 'We are excited to announce the launch of our new platform.',
-    date: Date.now(),
-    priority: 'high',
-    status: 'active'
-  },
+  
   {
     id: '2',
     title: 'আমাদের নতুন প্যানেল রেডি',
@@ -27,14 +20,7 @@ const initialNotices: Notice[] = [
     priority: 'medium',
     status: 'active'
   },
-  {
-    id: '3',
-    title: 'System Update',
-    content: 'Platform maintenance completed.',
-    date: Date.now() - 172800000,
-    priority: 'low',
-    status: 'active'
-  }
+  
 ];
 
 export const NoticeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
