@@ -14,10 +14,10 @@ const slides = [
   },
   {
     image: 'https://i.ibb.co/sQjSTjd/Untitled-design.png'
-  }
+  },
   {
     image: 'https://lc247.app//assets/images/home/BTG-SLOT-007.webp'
-  }
+  },
 ];
 
 const HeroBanner = () => {
