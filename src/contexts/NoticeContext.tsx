@@ -15,7 +15,7 @@ const initialNotices: Notice[] = [
   {
     id: '2',
     title: 'LC247 v2.o',
-    content: 'আমাদের নতুন প্যানেল রেডি হচ্ছে, আজ রাত ১১ টার মধ্যে সকল এজেন্ট কে ID দেওয়া হবে',
+    content: 'আমাদের আপডেট প্যানেল রেডি হচ্ছে, আজ রাত ১১ টার মধ্যে সকল এজেন্ট কে ID দেওয়া হবে',
     date: Date.now() - 86400000,
     priority: 'medium',
     status: 'active'
