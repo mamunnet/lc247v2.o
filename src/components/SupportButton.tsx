@@ -5,7 +5,7 @@ const SupportButton = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const supportNumbers = [
-    { id: 'Customer Support 1', number: '+3159755293' }
+    { id: 'Customer Support 1', number: '+13159755293' }
   ];
 
   return (
