@@ -21,8 +21,8 @@ const initialNotices: Notice[] = [
   },
   {
     id: '2',
-    title: 'New Game Launch',
-    content: 'Experience our latest game collection.',
+    title: 'আমাদের নতুন প্যানেল রেডি',
+    content: 'আমাদের নতুন প্যানেল লিঙ্ক রেডি হয়ে গেছে, আর কিছুক্ষনের মদ্ধেই সকল এজেন্ট দের প্রোভাইড করা হবে',
     date: Date.now() - 86400000,
     priority: 'medium',
     status: 'active'
