@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Eye, Edit, Trash2, Star, Plus } from 'lucide-react';
+import { Eye, Edit, Trash2, Star, Plus, Search } from 'lucide-react';
 import { useAgents } from '../../contexts/AgentContext';
 import AddAgentModal from '../../components/admin/AddAgentModal';
 import EditAgentModal from '../../components/admin/EditAgentModal';
+import ViewAgentModal from '../../components/ViewAgentModal';
 import { Agent } from '../../types';
 
 interface AgentListProps {
@@ -10,20 +11,25 @@ interface AgentListProps {
 }
 
 export default function AdminAgentList({ type }: AgentListProps) {
-  const { agents, addAgent, updateAgent, deleteAgent, getUplineOptions, getAgentsByRole } = useAgents();
+  const { agents, addAgent, updateAgent, deleteAgent, getAgentsByRole } = useAgents();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
   const displayAgents = type === 'all' 
-    ? Object.values(agents).flat() 
+    ? agents
     : getAgentsByRole(type);
 
+  const filteredAgents = displayAgents.filter(agent => 
+    agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    agent.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    agent.phoneNumber.includes(searchQuery)
+  );
+
   const handleAdd = async (newAgent: Omit<Agent, 'id'>) => {
-    await addAgent({
-      ...newAgent,
-      role: type
-    });
+    await addAgent(newAgent);
     setShowAddModal(false);
   };
 
@@ -39,7 +45,10 @@ export default function AdminAgentList({ type }: AgentListProps) {
     }
   };
 
-  const uplines = getUplineOptions(type);
+  const handleView = (agent: Agent) => {
+    setSelectedAgent(agent);
+    setShowViewModal(true);
+  };
 
   return (
     <div className="p-4 md:p-6">
@@ -47,13 +56,26 @@ export default function AdminAgentList({ type }: AgentListProps) {
         <h1 className="text-2xl font-bold text-emerald-400">
           {type === 'all' ? 'All Agents' : `${type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} List`}
         </h1>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-full md:w-auto justify-center"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Add New Agent</span>
-        </button>
+        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search agents..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white w-full md:w-64
+                       focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            />
+          </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-full md:w-auto justify-center"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Add New Agent</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-gray-800 rounded-lg shadow overflow-hidden">
@@ -70,7 +92,7 @@ export default function AdminAgentList({ type }: AgentListProps) {
               </tr>
             </thead>
             <tbody className="bg-gray-800 divide-y divide-gray-700">
-              {displayAgents.map((agent: Agent) => (
+              {filteredAgents.map((agent: Agent) => (
                 <tr key={agent.id} className="hover:bg-gray-700/50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -113,16 +135,25 @@ export default function AdminAgentList({ type }: AgentListProps) {
                     <div className="flex space-x-2">
                       <button 
                         className="text-blue-400 hover:text-blue-300"
+                        onClick={() => handleView(agent)}
+                        title="View Details"
+                      >
+                        <Eye className="w-5 h-5" />
+                      </button>
+                      <button 
+                        className="text-emerald-400 hover:text-emerald-300"
                         onClick={() => {
                           setSelectedAgent(agent);
                           setShowEditModal(true);
                         }}
+                        title="Edit Agent"
                       >
                         <Edit className="w-5 h-5" />
                       </button>
                       <button 
                         className="text-red-400 hover:text-red-300"
                         onClick={() => handleDelete(agent.id)}
+                        title="Delete Agent"
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>
@@ -141,7 +172,8 @@ export default function AdminAgentList({ type }: AgentListProps) {
           onClose={() => setShowAddModal(false)}
           onAdd={handleAdd}
           roleTitle={type.toUpperCase()}
-          uplines={uplines}
+          uplines={agents}
+          isDashboard={type === 'all'}
         />
       )}
 
@@ -155,7 +187,18 @@ export default function AdminAgentList({ type }: AgentListProps) {
           onEdit={handleEdit}
           agent={selectedAgent}
           roleTitle={type.toUpperCase()}
-          uplines={uplines}
+          uplines={agents}
+        />
+      )}
+
+      {showViewModal && selectedAgent && (
+        <ViewAgentModal
+          isOpen={showViewModal}
+          onClose={() => {
+            setShowViewModal(false);
+            setSelectedAgent(null);
+          }}
+          agent={selectedAgent}
         />
       )}
     </div>
