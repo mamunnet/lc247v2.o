@@ -1,6 +1,7 @@
 import React from 'react';
-import { X, Star, Phone, Hash, Globe } from 'lucide-react';
+import { X, Star, Phone, Hash, Globe, User } from 'lucide-react';
 import { Agent } from '../types';
+import { useAgents } from '../contexts/AgentContext';
 
 interface ViewAgentModalProps {
   isOpen: boolean;
@@ -20,7 +21,23 @@ const WhatsAppIcon = () => (
 );
 
 const ViewAgentModal: React.FC<ViewAgentModalProps> = ({ isOpen, onClose, agent }) => {
+  const { agents } = useAgents();
+  
   if (!isOpen) return null;
+
+  const uplineAgent = agent.uplineId ? agents.find(a => a.id === agent.uplineId) : null;
+
+  const getRoleName = (role: string) => {
+    const roles: { [key: string]: string } = {
+      'company-head': 'কোম্পানি হেড',
+      'admin': 'এডমিন',
+      'ss-admin': 'সিনিয়র সাব এডমিন',
+      'sub-admin': 'সাব এডমিন',
+      'super-agent': 'সুপার এজেন্ট',
+      'master-agent': 'মাস্টার এজেন্ট'
+    };
+    return roles[role.toLowerCase()] || role;
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -28,7 +45,7 @@ const ViewAgentModal: React.FC<ViewAgentModalProps> = ({ isOpen, onClose, agent 
         <div className="p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-emerald-400">Company Head Details</h2>
+            <h2 className="text-xl font-bold text-emerald-400">এজেন্টের বিস্তারিত তথ্য</h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-white transition-colors"
@@ -46,7 +63,7 @@ const ViewAgentModal: React.FC<ViewAgentModalProps> = ({ isOpen, onClose, agent 
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-white">{agent.name}</h3>
-                <p className="text-emerald-400">Company Head</p>
+                <p className="text-emerald-400">{getRoleName(agent.role)}</p>
               </div>
             </div>
 
@@ -56,7 +73,7 @@ const ViewAgentModal: React.FC<ViewAgentModalProps> = ({ isOpen, onClose, agent 
               <div className="bg-gray-700/50 p-4 rounded-lg">
                 <div className="flex items-center space-x-2 text-gray-400 mb-1">
                   <Hash className="w-4 h-4" />
-                  <span className="text-sm">Agent ID</span>
+                  <span className="text-sm">এজেন্ট আইডি</span>
                 </div>
                 <p className="text-white font-medium">{agent.id}</p>
               </div>
@@ -65,7 +82,7 @@ const ViewAgentModal: React.FC<ViewAgentModalProps> = ({ isOpen, onClose, agent 
               <div className="bg-gray-700/50 p-4 rounded-lg">
                 <div className="flex items-center space-x-2 text-gray-400 mb-1">
                   <Star className="w-4 h-4" />
-                  <span className="text-sm">Rating</span>
+                  <span className="text-sm">রেটিং</span>
                 </div>
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
@@ -83,7 +100,7 @@ const ViewAgentModal: React.FC<ViewAgentModalProps> = ({ isOpen, onClose, agent 
               <div className="bg-gray-700/50 p-4 rounded-lg">
                 <div className="flex items-center space-x-2 text-gray-400 mb-1">
                   <Phone className="w-4 h-4" />
-                  <span className="text-sm">Phone Number</span>
+                  <span className="text-sm">ফোন নাম্বার</span>
                 </div>
                 <p className="text-white font-medium">{agent.phoneNumber}</p>
               </div>
@@ -92,7 +109,7 @@ const ViewAgentModal: React.FC<ViewAgentModalProps> = ({ isOpen, onClose, agent 
               <div className="bg-gray-700/50 p-4 rounded-lg">
                 <div className="flex items-center space-x-2 text-gray-400 mb-1">
                   <Globe className="w-4 h-4" />
-                  <span className="text-sm">WhatsApp</span>
+                  <span className="text-sm">হোয়াটসঅ্যাপ</span>
                 </div>
                 <a
                   href={agent.socialLink}
@@ -101,9 +118,38 @@ const ViewAgentModal: React.FC<ViewAgentModalProps> = ({ isOpen, onClose, agent 
                   className="inline-flex items-center space-x-2 text-[#25D366] hover:text-[#128C7E] transition-colors"
                 >
                   <WhatsAppIcon />
-                  <span>Contact on WhatsApp</span>
+                  <span>হোয়াটসঅ্যাপে যোগাযোগ করুন</span>
                 </a>
               </div>
+
+              {/* Upline Details */}
+              {uplineAgent && (
+                <div className="bg-gray-700/50 p-4 rounded-lg md:col-span-2">
+                  <div className="flex items-center space-x-2 text-gray-400 mb-3">
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">আপলাইন এজেন্টের তথ্য</span>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
+                      {uplineAgent.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">{uplineAgent.name}</p>
+                      <p className="text-emerald-400 text-sm">{getRoleName(uplineAgent.role)}</p>
+                      <p className="text-gray-400 text-sm">{uplineAgent.id}</p>
+                      <a
+                        href={uplineAgent.socialLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#25D366] hover:text-[#128C7E] text-sm flex items-center space-x-1 mt-1"
+                      >
+                        <WhatsAppIcon />
+                        <span>যোগাযোগ করুন</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -113,7 +159,7 @@ const ViewAgentModal: React.FC<ViewAgentModalProps> = ({ isOpen, onClose, agent 
               onClick={onClose}
               className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
             >
-              Close
+              বন্ধ করুন
             </button>
           </div>
         </div>
