@@ -12,13 +12,15 @@ interface NoticeBoardProps {
 const NoticeBoard: React.FC<NoticeBoardProps> = ({ notices }) => {
   const formatDisplayDate = (timestamp: number) => {
     try {
-      return format(new Date(timestamp), 'MMM dd, yyyy');
+      return format(new Date(timestamp), 'MMM dd, yyyy hh:mm a');
     } catch {
-      return format(new Date(), 'MMM dd, yyyy');
+      return format(new Date(), 'MMM dd, yyyy hh:mm a');
     }
   };
 
-  if (notices.length === 0) return null;
+  const activeNotices = notices.filter(notice => notice.status === 'active');
+
+  if (activeNotices.length === 0) return null;
 
   return (
     <div className="bg-gradient-to-r from-red-500/10 via-red-500/5 to-red-500/10 backdrop-blur-sm border-y border-red-500/20 py-2">
@@ -39,7 +41,7 @@ const NoticeBoard: React.FC<NoticeBoardProps> = ({ notices }) => {
               direction="horizontal"
               className="w-full"
             >
-              {notices.map((notice) => (
+              {activeNotices.map((notice) => (
                 <SwiperSlide key={notice.id}>
                   <div className="flex items-center text-white">
                     <span className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${
@@ -49,6 +51,7 @@ const NoticeBoard: React.FC<NoticeBoardProps> = ({ notices }) => {
                     }`}></span>
                     <span className="text-sm font-medium">{notice.title}:</span>
                     <span className="text-sm text-gray-300 ml-2">{notice.content}</span>
+                    <span className="text-xs text-gray-400 ml-2">({formatDisplayDate(notice.date)})</span>
                   </div>
                 </SwiperSlide>
               ))}
