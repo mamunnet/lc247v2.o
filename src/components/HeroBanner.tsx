@@ -7,13 +7,13 @@ import 'swiper/css/navigation';
 
 const slides = [
   {
-    image: 'https://i.ibb.co/jrSXGqf/Your-paragraph-text.png'
+    image: 'https://lc247.club/exchange/assets/images/home/Sexy.webp'
   },
   {
-    image: 'https://i.ibb.co/QMCvDKC/Untitled-design-1.png'
+    image: 'https://lc247.club/exchange/assets/images/home/banner_sports.webp'
   },
   {
-    image: 'https://i.ibb.co/sQjSTjd/Untitled-design.png'
+    image: 'https://lc247.club/exchange/assets/images/home/kingmaker.webp'
   },
   {
     image: 'https://lc247.app//assets/images/home/BTG-SLOT-007.webp'
