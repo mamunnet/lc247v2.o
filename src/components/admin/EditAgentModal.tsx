@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { X, Phone, User, Hash, Star } from 'lucide-react';
-
-interface Agent {
-  name: string;
-  id: string;
-  rating: number;
-  socialLink: string;
-  phoneNumber: string;
-  uplineId?: string;
-}
+import { Agent } from '../../types';
 
 interface EditAgentModalProps {
   isOpen: boolean;
   onClose: () => void;
   onEdit: (agent: Agent) => void;
-  agent: Agent | null;
+  agent: Agent;
   roleTitle: string;
-  uplines?: { name: string; id: string }[];
+  uplines: Agent[];
 }
 
 const EditAgentModal = ({ isOpen, onClose, onEdit, agent, roleTitle, uplines }: EditAgentModalProps) => {
@@ -26,7 +18,8 @@ const EditAgentModal = ({ isOpen, onClose, onEdit, agent, roleTitle, uplines }: 
     rating: 5,
     socialLink: '',
     phoneNumber: '',
-    uplineId: ''
+    uplineId: '',
+    role: ''
   });
 
   useEffect(() => {
@@ -49,7 +42,7 @@ const EditAgentModal = ({ isOpen, onClose, onEdit, agent, roleTitle, uplines }: 
     onEdit(updatedAgent);
   };
 
-  if (!isOpen || !agent) return null;
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -115,7 +108,7 @@ const EditAgentModal = ({ isOpen, onClose, onEdit, agent, roleTitle, uplines }: 
               </div>
             </div>
 
-            {uplines && (
+            {roleTitle !== 'COMPANY HEAD' && uplines.length > 0 && (
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Select Upline
@@ -145,9 +138,7 @@ const EditAgentModal = ({ isOpen, onClose, onEdit, agent, roleTitle, uplines }: 
                   <Star
                     key={i}
                     className={`w-5 h-5 ${
-                      i < formData.rating
-                        ? 'text-yellow-400 fill-current'
-                        : 'text-gray-400'
+                      i < formData.rating ? 'text-yellow-400 fill-current' : 'text-gray-500'
                     }`}
                     onClick={() => setFormData({ ...formData, rating: i + 1 })}
                     style={{ cursor: 'pointer' }}
