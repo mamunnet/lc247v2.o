@@ -43,7 +43,7 @@ const Footer = () => {
                 </h3>
               </Link>
               <a 
-                href="https://lc247.live"
+                href="https://lc247.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-2 inline-flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors text-sm"
