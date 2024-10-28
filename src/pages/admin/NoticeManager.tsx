@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Bell, Trash2, Edit, Calendar, CheckCircle } from 'lucide-react';
+import { Plus, Bell, Trash2, Edit, Calendar, CheckCircle, Clock } from 'lucide-react';
 import { useNotices } from '../../contexts/NoticeContext';
 import { Notice } from '../../types';
 import { format } from 'date-fns';
@@ -21,14 +21,20 @@ const NoticeManager = () => {
     e.preventDefault();
     
     try {
+      const currentTimestamp = Date.now();
+      const noticeData = {
+        ...formData,
+        date: currentTimestamp
+      };
+
       if (editingNotice) {
         await updateNotice(editingNotice.id, {
-          ...formData,
+          ...noticeData,
           status: editingNotice.status
         });
         setSuccessMessage('Notice updated successfully!');
       } else {
-        await addNotice(formData);
+        await addNotice(noticeData);
         setSuccessMessage('Notice added successfully!');
       }
       
@@ -42,7 +48,6 @@ const NoticeManager = () => {
       setEditingNotice(null);
       setShowSuccess(true);
       
-      // Hide success message after 3 seconds
       setTimeout(() => {
         setShowSuccess(false);
         setSuccessMessage('');
@@ -88,6 +93,14 @@ const NoticeManager = () => {
     }
   };
 
+  const formatDisplayTime = (timestamp: number) => {
+    try {
+      return format(new Date(timestamp), 'hh:mm a');
+    } catch {
+      return format(new Date(), 'hh:mm a');
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -104,7 +117,6 @@ const NoticeManager = () => {
         </button>
       </div>
 
-      {/* Success Message */}
       {showSuccess && (
         <div className="fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2 z-50 animate-fade-in-down">
           <CheckCircle className="w-5 h-5" />
@@ -205,10 +217,16 @@ const NoticeManager = () => {
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="font-semibold text-white">{notice.title}</h3>
-                <p className="text-sm text-gray-400 flex items-center mt-1">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  {formatDisplayDate(notice.date)}
-                </p>
+                <div className="flex items-center space-x-3 mt-1 text-sm text-gray-400">
+                  <div className="flex items-center">
+                    <Calendar className="w-4 h-4 mr-1" />
+                    {formatDisplayDate(notice.date)}
+                  </div>
+                  <div className="flex items-center">
+                    <Clock className="w-4 h-4 mr-1" />
+                    {formatDisplayTime(notice.date)}
+                  </div>
+                </div>
               </div>
               <div className="flex space-x-2">
                 <button
