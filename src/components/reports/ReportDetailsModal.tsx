@@ -14,7 +14,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ report, onClose
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl m-4">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-emerald-400">Report Details</h2>
+          <h2 className="text-xl font-bold text-emerald-400">রিপোর্ট বিস্তারিত</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white"
@@ -25,7 +25,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ report, onClose
 
         <div className="space-y-4">
           <div>
-            <h3 className="text-sm font-medium text-gray-400 mb-1">Reported Agent</h3>
+            <h3 className="text-sm font-medium text-gray-400 mb-1">রিপোর্ট করা এজেন্ট</h3>
             <div className="bg-gray-700/50 p-3 rounded-lg">
               <div className="flex items-center">
                 <div className="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center">
@@ -39,17 +39,9 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ report, onClose
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-medium text-gray-400 mb-1">Reported By</h3>
-            <div className="bg-gray-700/50 p-3 rounded-lg">
-              <div className="text-sm text-white">{report.reportedByName}</div>
-              <div className="text-sm text-gray-400">{report.reportedById}</div>
-            </div>
-          </div>
-
           {report.whatsappNumber && (
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-1">Contact WhatsApp</h3>
+              <h3 className="text-sm font-medium text-gray-400 mb-1">যোগাযোগের WhatsApp নাম্বার</h3>
               <div className="bg-gray-700/50 p-3 rounded-lg">
                 <WhatsAppLink number={report.whatsappNumber} className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300">
                   <MessageSquare className="w-5 h-5" />
@@ -60,7 +52,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ report, onClose
           )}
 
           <div>
-            <h3 className="text-sm font-medium text-gray-400 mb-1">Reason</h3>
+            <h3 className="text-sm font-medium text-gray-400 mb-1">রিপোর্টের কারণ</h3>
             <div className="bg-gray-700/50 p-3 rounded-lg">
               <p className="text-sm text-white whitespace-pre-wrap">{report.reason}</p>
             </div>
@@ -73,14 +65,14 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ report, onClose
                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
               >
                 <XCircle className="w-5 h-5" />
-                <span>Reject</span>
+                <span>প্রত্যাখ্যান</span>
               </button>
               <button
                 onClick={() => onStatusUpdate(report.id!, 'resolved')}
                 className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors flex items-center space-x-2"
               >
                 <CheckCircle className="w-5 h-5" />
-                <span>Resolve</span>
+                <span>সমাধান</span>
               </button>
             </div>
           )}
