@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Bell, Trash2, Edit, Calendar } from 'lucide-react';
+import { Plus, Bell, Trash2, Edit, Calendar, CheckCircle } from 'lucide-react';
 import { useNotices } from '../../contexts/NoticeContext';
 import { Notice } from '../../types';
 import { format } from 'date-fns';
@@ -8,6 +8,8 @@ const NoticeManager = () => {
   const { notices, addNotice, updateNotice, deleteNotice } = useNotices();
   const [isAddingNotice, setIsAddingNotice] = useState(false);
   const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -15,26 +17,39 @@ const NoticeManager = () => {
     date: Date.now()
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (editingNotice) {
-      updateNotice(editingNotice.id, {
-        ...formData,
-        status: editingNotice.status
+    try {
+      if (editingNotice) {
+        await updateNotice(editingNotice.id, {
+          ...formData,
+          status: editingNotice.status
+        });
+        setSuccessMessage('Notice updated successfully!');
+      } else {
+        await addNotice(formData);
+        setSuccessMessage('Notice added successfully!');
+      }
+      
+      setFormData({
+        title: '',
+        content: '',
+        priority: 'low',
+        date: Date.now()
       });
+      setIsAddingNotice(false);
       setEditingNotice(null);
-    } else {
-      addNotice(formData);
+      setShowSuccess(true);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setShowSuccess(false);
+        setSuccessMessage('');
+      }, 3000);
+    } catch (error) {
+      console.error('Failed to handle notice:', error);
     }
-    
-    setFormData({
-      title: '',
-      content: '',
-      priority: 'low',
-      date: Date.now()
-    });
-    setIsAddingNotice(false);
   };
 
   const handleEdit = (notice: Notice) => {
@@ -48,9 +63,20 @@ const NoticeManager = () => {
     setIsAddingNotice(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this notice?')) {
-      deleteNotice(id);
+      try {
+        await deleteNotice(id);
+        setSuccessMessage('Notice deleted successfully!');
+        setShowSuccess(true);
+        
+        setTimeout(() => {
+          setShowSuccess(false);
+          setSuccessMessage('');
+        }, 3000);
+      } catch (error) {
+        console.error('Failed to delete notice:', error);
+      }
     }
   };
 
@@ -77,6 +103,14 @@ const NoticeManager = () => {
           <span>Add Notice</span>
         </button>
       </div>
+
+      {/* Success Message */}
+      {showSuccess && (
+        <div className="fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2 z-50 animate-fade-in-down">
+          <CheckCircle className="w-5 h-5" />
+          <span>{successMessage}</span>
+        </div>
+      )}
 
       {isAddingNotice && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
