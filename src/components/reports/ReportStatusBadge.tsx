@@ -11,9 +11,15 @@ const ReportStatusBadge: React.FC<ReportStatusBadgeProps> = ({ status }) => {
     rejected: 'bg-red-500/20 text-red-400'
   };
 
+  const statusText = {
+    pending: 'অপেক্ষমান',
+    resolved: 'সমাধান হয়েছে',
+    rejected: 'প্রত্যাখ্যাত'
+  };
+
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles[status]}`}>
-      {status.charAt(0).toUpperCase() + status.slice(1)}
+      {statusText[status]}
     </span>
   );
 };
