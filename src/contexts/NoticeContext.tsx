@@ -20,6 +20,14 @@ const initialNotices: Notice[] = [
     priority: 'medium',
     status: 'active'
   },
+  {
+    id: '3',
+    title: 'Lc247.club',
+    content: 'আমাদের প্রাইমারি ডোমেইন লিঙ্ক lc247.club এবং Lc247.asia',
+    date: Date.now() - 86400000,
+    priority: 'medium',
+    status: 'active'
+  },
   
 ];
 
