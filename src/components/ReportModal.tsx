@@ -11,47 +11,19 @@ interface ReportModalProps {
 
 const ReportModal = ({ isOpen, onClose, agent }: ReportModalProps) => {
   const [reason, setReason] = useState('');
-  const { getAgentsByRole, submitReport } = useAgents();
-  const [selectedUpline, setSelectedUpline] = useState('');
-  const [showSuccess, setShowSuccess] = useState(false);
   const [whatsappNumber, setWhatsappNumber] = useState('');
-  
-  const getUplineAgents = () => {
-    switch (agent.role) {
-      case 'master-agent':
-        return getAgentsByRole('super-agent');
-      case 'super-agent':
-        return getAgentsByRole('sub-admin');
-      case 'sub-admin':
-        return getAgentsByRole('ss-admin');
-      case 'ss-admin':
-        return getAgentsByRole('admin');
-      case 'admin':
-        return getAgentsByRole('company-head');
-      default:
-        return getAgentsByRole('master-agent');
-    }
-  };
-
-  const uplineAgents = getUplineAgents();
-  const uplineRoleDisplay = agent.role === 'master-agent' ? 'Super Agent' :
-                           agent.role === 'super-agent' ? 'Sub Admin' :
-                           agent.role === 'sub-admin' ? 'SS Admin' :
-                           agent.role === 'ss-admin' ? 'Admin' :
-                           agent.role === 'admin' ? 'Company Head' : 'Master Agent';
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { submitReport } = useAgents();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const uplineAgent = uplineAgents.find(a => a.id === selectedUpline);
-    if (!uplineAgent) return;
-
     try {
       await submitReport({
         agentId: agent.id,
         agentName: agent.name,
-        reportedById: uplineAgent.id,
-        reportedByName: uplineAgent.name,
+        reportedById: 'USER',
+        reportedByName: 'Anonymous User',
         reason,
         whatsappNumber
       });
@@ -61,7 +33,6 @@ const ReportModal = ({ isOpen, onClose, agent }: ReportModalProps) => {
         onClose();
         setShowSuccess(false);
         setReason('');
-        setSelectedUpline('');
         setWhatsappNumber('');
       }, 3000);
     } catch (error) {
@@ -78,12 +49,12 @@ const ReportModal = ({ isOpen, onClose, agent }: ReportModalProps) => {
           <div className="flex justify-center mb-4">
             <CheckCircle className="h-16 w-16 text-emerald-400" />
           </div>
-          <h2 className="text-2xl font-bold text-emerald-400 mb-4">Report Submitted Successfully!</h2>
+          <h2 className="text-2xl font-bold text-emerald-400 mb-4">রিপোর্ট সফলভাবে জমা হয়েছে!</h2>
           <p className="text-gray-300 mb-6">
-            Thank you for your report. We will investigate this matter and contact you via WhatsApp at {whatsappNumber}.
+            আপনার রিপোর্টটি জমা হয়েছে। আমরা শীঘ্রই WhatsApp এ যোগাযোগ করব।
           </p>
           <div className="animate-pulse text-sm text-gray-400">
-            This window will close automatically...
+            এই উইন্ডোটি স্বয়ংক্রিয়ভাবে বন্ধ হয়ে যাবে...
           </div>
         </div>
       </div>
@@ -94,7 +65,7 @@ const ReportModal = ({ isOpen, onClose, agent }: ReportModalProps) => {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md m-4">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-emerald-400">Report {agent.role.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</h2>
+          <h2 className="text-xl font-bold text-emerald-400">এজেন্ট রিপোর্ট করুন</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -106,7 +77,7 @@ const ReportModal = ({ isOpen, onClose, agent }: ReportModalProps) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Agent Information
+              এজেন্টের তথ্য
             </label>
             <div className="bg-gray-700/50 p-4 rounded-lg">
               <div className="flex items-center space-x-3">
@@ -126,43 +97,27 @@ const ReportModal = ({ isOpen, onClose, agent }: ReportModalProps) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Select {uplineRoleDisplay}
-            </label>
-            <select
-              value={selectedUpline}
-              onChange={(e) => setSelectedUpline(e.target.value)}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-emerald-500"
-              required
-            >
-              <option value="">Select {uplineRoleDisplay}</option>
-              {uplineAgents.map((upline) => (
-                <option key={upline.id} value={upline.id}>
-                  {upline.name} ({upline.id})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Your WhatsApp Number
+              আপনার WhatsApp নাম্বার
+              <span className="text-xs text-gray-400 block mt-1">
+                আমরা এই নাম্বারে আপনার সাথে যোগাযোগ করব
+              </span>
             </label>
             <input
               type="tel"
               value={whatsappNumber}
               onChange={(e) => setWhatsappNumber(e.target.value)}
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-emerald-500"
-              placeholder="Enter your WhatsApp number"
+              placeholder="উদাহরণ: +8801xxxxxxxxx"
               required
             />
-            <p className="text-sm text-gray-400 mt-1">
-              Include country code (e.g., +1234567890)
-            </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Reason for Report
+              রিপোর্টের কারণ
+              <span className="text-xs text-gray-400 block mt-1">
+                বিস্তারিতভাবে সমস্যার বর্ণনা দিন
+              </span>
             </label>
             <textarea
               value={reason}
@@ -170,7 +125,7 @@ const ReportModal = ({ isOpen, onClose, agent }: ReportModalProps) => {
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-emerald-500"
               rows={4}
               required
-              placeholder="Please describe the reason for reporting..."
+              placeholder="এজেন্টের সাথে কি সমস্যা হয়েছে তা বিস্তারিত লিখুন..."
             />
           </div>
 
@@ -180,13 +135,13 @@ const ReportModal = ({ isOpen, onClose, agent }: ReportModalProps) => {
               onClick={onClose}
               className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
             >
-              Cancel
+              বাতিল
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
             >
-              Submit Report
+              রিপোর্ট করুন
             </button>
           </div>
         </form>
