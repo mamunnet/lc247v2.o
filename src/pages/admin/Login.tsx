@@ -35,8 +35,9 @@ const AdminLogin = () => {
       <div className="w-full max-w-md">
         {/* Logo Section */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
-            LC247
+          <h1 className="text-4xl font-bold">
+            <span className="text-white">LC</span>
+            <span className="text-[#65EDBF]">247</span>
           </h1>
           <p className="text-gray-400 mt-2">Admin Control Panel</p>
         </div>
