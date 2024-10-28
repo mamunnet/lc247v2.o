@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { X, Phone, User, Hash, Star } from 'lucide-react';
-import { useAgents } from '../../contexts/AgentContext';
+import { X, Phone, User } from 'lucide-react';
+import { Agent } from '../../types';
 
 interface AddAgentModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (agent: any) => void;
   roleTitle: string;
+  uplines: Agent[];
+  isDashboard?: boolean;
 }
 
-const AddAgentModal = ({ isOpen, onClose, onAdd, roleTitle }: AddAgentModalProps) => {
-  const { getUplineOptions } = useAgents();
+const AddAgentModal = ({ isOpen, onClose, onAdd, roleTitle, uplines, isDashboard = false }: AddAgentModalProps) => {
   const [formData, setFormData] = useState({
     name: '',
     id: `LC${Math.floor(100000 + Math.random() * 900000)}`,
@@ -18,10 +19,38 @@ const AddAgentModal = ({ isOpen, onClose, onAdd, roleTitle }: AddAgentModalProps
     uplineId: '',
     rating: 5,
     socialLink: '',
-    role: roleTitle.toLowerCase().replace(/\s+/g, '-')
+    role: isDashboard ? '' : roleTitle.toLowerCase().replace(/\s+/g, '-')
   });
 
-  const uplineOptions = getUplineOptions(roleTitle);
+  const agentTypes = [
+    { value: 'company-head', label: 'Company Head' },
+    { value: 'admin', label: 'Admin' },
+    { value: 'ss-admin', label: 'SS Admin' },
+    { value: 'sub-admin', label: 'Sub Admin' },
+    { value: 'super-agent', label: 'Super Agent' },
+    { value: 'master-agent', label: 'Master Agent' }
+  ];
+
+  const roleHierarchy: { [key: string]: string } = {
+    'master-agent': 'super-agent',
+    'super-agent': 'sub-admin',
+    'sub-admin': 'ss-admin',
+    'ss-admin': 'admin',
+    'admin': 'company-head'
+  };
+
+  const getUplineOptionsForRole = (role: string): Agent[] => {
+    const normalizedRole = role.toLowerCase();
+    const uplineRole = roleHierarchy[normalizedRole];
+    
+    if (!uplineRole) return [];
+
+    return uplines.filter(agent => 
+      agent.role.toLowerCase() === uplineRole
+    );
+  };
+
+  const availableUplines = formData.role ? getUplineOptionsForRole(formData.role) : [];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +72,7 @@ const AddAgentModal = ({ isOpen, onClose, onAdd, roleTitle }: AddAgentModalProps
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold text-emerald-400">
-              Add New {roleTitle}
+              Add New Agent
             </h2>
             <button
               onClick={onClose}
@@ -66,6 +95,7 @@ const AddAgentModal = ({ isOpen, onClose, onAdd, roleTitle }: AddAgentModalProps
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   required
+                  placeholder="Enter agent name"
                 />
               </div>
             </div>
@@ -82,11 +112,39 @@ const AddAgentModal = ({ isOpen, onClose, onAdd, roleTitle }: AddAgentModalProps
                   onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   required
+                  placeholder="Enter phone number"
                 />
               </div>
             </div>
 
-            {roleTitle !== 'COMPANY HEAD' && uplineOptions.length > 0 && (
+            {isDashboard && (
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Agent Type
+                </label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => {
+                    setFormData({ 
+                      ...formData, 
+                      role: e.target.value,
+                      uplineId: '' // Reset upline when role changes
+                    });
+                  }}
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  required
+                >
+                  <option value="">Select agent type</option>
+                  {agentTypes.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {formData.role && formData.role !== 'company-head' && (
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Select Upline
@@ -98,28 +156,19 @@ const AddAgentModal = ({ isOpen, onClose, onAdd, roleTitle }: AddAgentModalProps
                   required
                 >
                   <option value="">Select an upline</option>
-                  {uplineOptions.map((upline) => (
+                  {availableUplines.map((upline) => (
                     <option key={upline.id} value={upline.id}>
-                      {upline.name} ({upline.id})
+                      {upline.name} ({upline.id}) - {upline.role}
                     </option>
                   ))}
                 </select>
+                {availableUplines.length === 0 && (
+                  <p className="mt-2 text-sm text-yellow-400">
+                    No available uplines found for this agent type. Please create a {roleHierarchy[formData.role]} first.
+                  </p>
+                )}
               </div>
             )}
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Default Rating
-              </label>
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-5 h-5 text-yellow-400 fill-current"
-                  />
-                ))}
-              </div>
-            </div>
 
             <div className="flex justify-end space-x-3 mt-6">
               <button
@@ -133,7 +182,7 @@ const AddAgentModal = ({ isOpen, onClose, onAdd, roleTitle }: AddAgentModalProps
                 type="submit"
                 className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
               >
-                Add {roleTitle}
+                Add Agent
               </button>
             </div>
           </form>
