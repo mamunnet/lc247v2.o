@@ -7,23 +7,20 @@ import 'swiper/css/navigation';
 
 const slides = [
   {
-    image: 'https://lc247.club/exchange/assets/images/home/Sexy.webp'
+    image: 'https://lc247.club/exchange/assets/images/home/netent.webp'
+  },
+  {
+    image: 'https://lc247.club/exchange/assets/images/home/sportbook.webp'
   },
   {
     image: 'https://lc247.club/exchange/assets/images/home/banner_sports.webp'
-  },
-  {
-    image: 'https://lc247.club/exchange/assets/images/home/kingmaker.webp'
-  },
-  {
-    image: 'https://lc247.app//assets/images/home/BTG-SLOT-007.webp'
-  },
+  }
 ];
 
 const HeroBanner = () => {
   return (
-    <div className="container mx-auto px-4">
-      <div className="relative h-[200px] md:h-[250px] lg:h-[300px] max-w-5xl mx-auto overflow-hidden rounded-xl shadow-[0_0_15px_rgba(101,237,191,0.3)] border border-emerald-500/20">
+    <div className="w-full bg-gray-900">
+      <div className="relative h-[150px] md:h-[200px] lg:h-[250px] w-full overflow-hidden">
         <Swiper
           modules={[Autoplay, EffectFade, Navigation]}
           effect="fade"
@@ -39,29 +36,54 @@ const HeroBanner = () => {
             <SwiperSlide key={index}>
               <div className="relative h-full w-full">
                 <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${slide.image})` }}
-                />
+                  className="absolute inset-0"
+                  style={{ 
+                    backgroundImage: `url(${slide.image})`,
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '100% 100%', // Forces image to fit exactly
+                    imageRendering: 'auto',
+                    width: '100%',
+                    height: '100%'
+                  }}
+                >
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-gray-900/80 via-gray-900/50 to-gray-900/80"></div>
+                </div>
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
 
-        {/* Custom Styles for Swiper Navigation */}
+        {/* Custom Navigation Styles */}
         <style>{`
           .swiper-button-next,
           .swiper-button-prev {
             color: #fff;
             background: rgba(0, 0, 0, 0.3);
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+          }
+
+          .swiper-button-next:hover,
+          .swiper-button-prev:hover {
+            background: rgba(0, 0, 0, 0.5);
           }
 
           .swiper-button-next:after,
           .swiper-button-prev:after {
-            font-size: 16px;
+            font-size: 14px;
+          }
+
+          .swiper-button-next {
+            right: 10px;
+          }
+
+          .swiper-button-prev {
+            left: 10px;
           }
         `}</style>
       </div>
